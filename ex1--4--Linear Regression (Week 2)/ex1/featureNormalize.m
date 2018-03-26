@@ -26,14 +26,12 @@ sigma = zeros(1, size(X, 2));
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
 
+mu = mean(X);
+sigma = std(X);
 
-
-
-
-
-
-
-
+warning ("off", "Octave:broadcast");
+X_norm = (X .- mu) ./ sigma;
+warning ("on", "Octave:broadcast");
 % ============================================================
 
 end
