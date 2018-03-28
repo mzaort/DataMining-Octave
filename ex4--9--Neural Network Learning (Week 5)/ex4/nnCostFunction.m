@@ -62,23 +62,53 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% calculate h(x)
+a1 = X;
+a1 = [ones(size(a1, 1), 1), a1];
 
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
+a2 = [ones(size(a2, 1), 1), a2];
 
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
 
+% calculate J
+H = a3;
+J_sample = 0;
+J_reg = 0;
+for k = 1:num_labels
+  yk = y == k;
+  hk = H(:, k);
+  J_sample += (-yk' * log(hk) - (1 - yk') * log(1 - hk));
+end
 
+J_reg += sum(sum(Theta1 .* Theta1)) - sum(Theta1(:, 1) .^ 2);
+J_reg += sum(sum(Theta2 .* Theta2)) - sum(Theta2(:, 1) .^ 2);
 
+J = J_sample / m + lambda * J_reg / (2 * m);
 
+% calculate Grad
+Delta1 = zeros(size(Theta1));
+Delta2 = zeros(size(Theta2));
 
+predictY = zeros(size(H));
+for i = 1:m
+  predictY(i, y(i)) = 1;
+end
 
+delta3 = H - predictY;
+delta2 = (delta3 * Theta2 .* (a2 .* (1 - a2)))(:, 2:end);
 
+Delta2 += delta3' * a2;
+Delta1 += (delta2' * a1);
 
-
-
-
-
-
-
-
+Theta1M = Theta1;
+Theta1M(:, 1) = 0;
+Theta2M = Theta2;
+Theta2M(:, 1) = 0;
+Theta1_grad = Delta1 / m + lambda / m * Theta1M;
+Theta2_grad = Delta2 / m + lambda / m * Theta2M;
 
 % -------------------------------------------------------------
 
